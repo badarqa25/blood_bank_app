@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Add Blood to Inventory</h2>
+<form method="POST">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="donor_id" class="form-label">Donor</label>
+            <select class="form-select" id="donor_id" name="donor_id">
+                <option value="">Select Donor (Optional)</option>
+                {% for donor in donors %}
+                <option value="{{ donor.donor_id }}">{{ donor.first_name }} {{ donor.last_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="blood_type" class="form-label">Blood Type</label>
+            <select class="form-select" id="blood_type" name="blood_type" required>
+                <option value="">Select...</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="collection_date" class="form-label">Collection Date</label>
+            <input type="date" class="form-control" id="collection_date" name="collection_date" required>
+        </div>
+        <div class="col-md-6">
+            <label for="storage_location" class="form-label">Storage Location</label>
+            <input type="text" class="form-control" id="storage_location" name="storage_location" required>
+        </div>
+    </div>
+    
+    <div class="mb-3">
+        <label for="test_results" class="form-label">Test Results</label>
+        <textarea class="form-control" id="test_results" name="test_results" rows="3"></textarea>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Add to Inventory</button>
+    <a href="/inventory" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

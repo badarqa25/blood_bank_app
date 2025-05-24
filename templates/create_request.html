@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Create Blood Request</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="patient_id" class="form-label">Patient</label>
+        <select class="form-select" id="patient_id" name="patient_id" required>
+            <option value="">Select Patient</option>
+            {% for patient in patients %}
+            <option value="{{ patient.patient_id }}">
+                {{ patient.first_name }} {{ patient.last_name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="blood_type_needed" class="form-label">Blood Type Needed</label>
+        <select class="form-select" id="blood_type_needed" name="blood_type_needed" required>
+            <option value="">Select Blood Type</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="quantity" class="form-label">Quantity (units)</label>
+        <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1" required>
+    </div>
+    <div class="mb-3">
+        <label for="hospital_details" class="form-label">Hospital Details</label>
+        <textarea class="form-control" id="hospital_details" name="hospital_details" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Create Request</button>
+    <a href="/requests" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Blood Requests</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Request ID</th>
+            <th>Patient</th>
+            <th>Blood Type</th>
+            <th>Quantity</th>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for request in requests %}
+        <tr>
+            <td>{{ request.request_id }}</td>
+            <td>{{ request.patient_first_name }} {{ request.patient_last_name }}</td>
+            <td>{{ request.blood_type_needed }}</td>
+            <td>{{ request.quantity }}</td>
+            <td>{{ request.request_date }}</td>
+            <td>{{ request.status }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

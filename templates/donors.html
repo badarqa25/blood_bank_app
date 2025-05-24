@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Donor Management</h2>
+<a href="/donor/add" class="btn btn-primary mb-3">Add New Donor</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Blood Type</th>
+            <th>Contact</th>
+            <th>Last Donation</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for donor in donors %}
+        <tr>
+            <td>{{ donor.donor_id }}</td>
+            <td>{{ donor.first_name }} {{ donor.last_name }}</td>
+            <td>{{ donor.blood_type }}</td>
+            <td>{{ donor.contact_number }}</td>
+            <td>{{ donor.last_donation_date or 'Never' }}</td>
+            <td>
+                <a href="#" class="btn btn-sm btn-info">View</a>
+                <a href="#" class="btn btn-sm btn-warning">Edit</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

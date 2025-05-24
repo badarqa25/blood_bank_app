@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Blood Inventory</h2>
+<a href="/inventory/add" class="btn btn-primary mb-3">Add Blood to Inventory</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Blood Type</th>
+            <th>Donor</th>
+            <th>Collection Date</th>
+            <th>Expiry Date</th>
+            <th>Days Left</th>
+            <th>Status</th>
+            <th>Location</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in inventory %}
+        <tr>
+            <td>{{ item.blood_id }}</td>
+            <td>{{ item.blood_type }}</td>
+            <td>{{ item.first_name }} {{ item.last_name if item.first_name else 'N/A' }}</td>
+            <td>{{ item.collection_date }}</td>
+            <td>{{ item.expiry_date }}</td>
+            <td>
+                <span class="badge bg-{{ 'success' if item.days_until_expiry > 7 else 'warning' if item.days_until_expiry > 0 else 'danger' }}">
+                    {{ item.days_until_expiry }}
+                </span>
+            </td>
+            <td>{{ item.status }}</td>
+            <td>{{ item.storage_location }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

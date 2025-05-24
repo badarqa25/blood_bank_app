@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">Welcome to the Blood Bank System</h1>
+    <p class="lead">Manage blood donations, inventory, and patient requests efficiently.</p>
+    <hr class="my-4">
+    <div class="row">
+        <!-- Quick Actions Column -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    Quick Actions
+                </div>
+                <div class="card-body">
+                    <a href="/donor/add" class="btn btn-primary mb-2 w-100">Add New Donor</a>
+                    <a href="/inventory/add" class="btn btn-primary mb-2 w-100">Add Blood to Inventory</a>
+                    <a href="/patient/add" class="btn btn-primary mb-2 w-100">Register Patient</a>
+                    <a href="/request/create" class="btn btn-primary mb-2 w-100">Create Request</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blood Availability Column -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    Blood Availability
+                </div>
+                <div class="card-body" id="bloodAvailability">
+                    Loading blood availability...
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Column -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    Recent Activity
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="/patients" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Total Patients
+                            <span class="badge bg-danger rounded-pill" id="patientCount">Loading...</span>
+                        </a>
+                        <a href="/requests" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Pending Requests
+                            <span class="badge bg-warning rounded-pill" id="pendingRequests">Loading...</span>
+                        </a>
+                        <a href="/inventory" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            Blood Units Expiring Soon
+                            <span class="badge bg-danger rounded-pill" id="expiringSoon">Loading...</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Patients and Requests Section -->
+    <div class="row mt-4">
+        <!-- Recent Patients -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    Recent Patients
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Contact</th>
+                                    <th>Registered</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentPatients">
+                                <tr><td colspan="3">Loading recent patients...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="/patients" class="btn btn-outline-danger mt-2">View All Patients</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Requests -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    Recent Requests
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>Blood Type</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentRequests">
+                                <tr><td colspan="3">Loading recent requests...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="/requests" class="btn btn-outline-danger mt-2">View All Requests</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Fetch blood availability
+    fetch('/api/blood-availability')
+        .then(response => response.json())
+        .then(data => {
+            let html = '<ul class="list-group">';
+            data.forEach(item => {
+                html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${item.blood_type || 'All Types'}
+                    <span class="badge bg-danger rounded-pill">${item.count}</span>
+                </li>`;
+            });
+            html += '</ul>';
+            document.getElementById('bloodAvailability').innerHTML = html;
+        })
+        .catch(error => {
+            document.getElementById('bloodAvailability').innerHTML = 
+                'Error loading blood availability';
+        });
+
+    // Fetch recent activity data
+    fetch('/api/recent-activity')
+        .then(response => response.json())
+        .then(data => {
+            // Update counts
+            document.getElementById('patientCount').textContent = data.total_patients;
+            document.getElementById('pendingRequests').textContent = data.pending_requests;
+            document.getElementById('expiringSoon').textContent = data.expiring_soon;
+
+            // Populate recent patients
+            let patientsHtml = '';
+            data.recent_patients.forEach(patient => {
+                patientsHtml += `
+                <tr>
+                    <td>${patient.first_name} ${patient.last_name}</td>
+                    <td>${patient.contact_number}</td>
+                    <td>${new Date(patient.created_at).toLocaleDateString()}</td>
+                </tr>`;
+            });
+            document.getElementById('recentPatients').innerHTML = patientsHtml;
+
+            // Populate recent requests
+            let requestsHtml = '';
+            data.recent_requests.forEach(request => {
+                requestsHtml += `
+                <tr>
+                    <td>${request.patient_first_name} ${request.patient_last_name}</td>
+                    <td>${request.blood_type_needed}</td>
+                    <td><span class="badge ${request.status === 'pending' ? 'bg-warning' : 'bg-success'}">${request.status}</span></td>
+                </tr>`;
+            });
+            document.getElementById('recentRequests').innerHTML = requestsHtml;
+        })
+        .catch(error => {
+            console.error('Error loading recent activity:', error);
+        });
+</script>
+{% endblock %}
